@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Bus, LogOut, PlusCircle, Sparkles } from 'lucide-react';
 
 const Navbar = () => {
-    const { user, logout, isAuthenticated, isAdmin } = useAuth();
+    const { user, logout, isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {
