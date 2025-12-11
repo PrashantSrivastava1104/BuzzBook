@@ -44,7 +44,12 @@ export const createTrip = async (req, res) => {
 
 export const getTrips = async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM trips ORDER BY start_time ASC');
+        const result = await pool.query(`
+            SELECT t.*, 
+            (SELECT COUNT(*) FROM seats s WHERE s.trip_id = t.id AND s.status = 'AVAILABLE') as available_seats
+            FROM trips t
+            ORDER BY t.start_time ASC
+        `);
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });

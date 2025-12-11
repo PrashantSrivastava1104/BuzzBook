@@ -14,6 +14,50 @@ const seed = async () => {
     try {
         console.log('🌱 Starting Database Seed...');
 
+        // 0. Create Tables (Schema)
+        console.log('🏗️  Creating Database Schema...');
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS trips (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                start_time TIMESTAMP NOT NULL,
+                total_seats INTEGER NOT NULL,
+                price DECIMAL(10, 2) DEFAULT 0.00,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS bookings (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id),
+                trip_id INTEGER REFERENCES trips(id),
+                seat_ids INTEGER[] NOT NULL, 
+                total_amount DECIMAL(10, 2),
+                status VARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'CONFIRMED', 'FAILED', 'CANCELLED')),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS seats (
+                id SERIAL PRIMARY KEY,
+                trip_id INTEGER REFERENCES trips(id) ON DELETE CASCADE,
+                seat_number INTEGER NOT NULL,
+                status VARCHAR(20) DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE', 'BOOKED')),
+                booking_id INTEGER REFERENCES bookings(id)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_seats_trip ON seats(trip_id);
+            CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
+        `);
+
         // 1. Clear existing data
         console.log('🗑️  Clearing existing data...');
         await pool.query('DELETE FROM seats');
