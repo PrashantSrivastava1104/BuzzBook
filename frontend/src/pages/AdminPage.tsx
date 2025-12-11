@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Bus, Calendar, DollarSign, LayoutGrid } from 'lucide-react';
 
 const CreateTripPage = () => {
-    const [name, setName] = useState('');
+    const [source, setSource] = useState('');
+    const [destination, setDestination] = useState('');
     const [startTime, setStartTime] = useState('');
-    const [totalSeats, setTotalSeats] = useState(40);
+    // Fixed at 40 seats as per requirement
+    const totalSeats = 40;
     const [price, setPrice] = useState(0);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -15,9 +17,16 @@ const CreateTripPage = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await api.post('/trips', { name, start_time: startTime, total_seats: totalSeats, price });
-            // Alert replaced by toast if we had global toast context exposed, but standard alert is fine or we can assume Layout toast
-            // The Layout toast is top-center.
+            // Combine Source and Destination into the 'name' field expected by backend
+            const tripName = `${source} → ${destination}`;
+
+            await api.post('/trips', {
+                name: tripName,
+                start_time: startTime,
+                total_seats: totalSeats,
+                price
+            });
+
             alert('Trip created successfully!');
             navigate('/');
         } catch (error) {
@@ -45,18 +54,34 @@ const CreateTripPage = () => {
 
                 <div className="p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Trip Name</label>
-                            <div className="relative group">
-                                <Bus className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
-                                <input
-                                    type="text"
-                                    required
-                                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700"
-                                    placeholder="e.g. Express Route 101"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Source City</label>
+                                <div className="relative group">
+                                    <div className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors font-bold text-xs">FROM</div>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="w-full pl-16 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700"
+                                        placeholder="e.g. Mumbai"
+                                        value={source}
+                                        onChange={(e) => setSource(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Destination City</label>
+                                <div className="relative group">
+                                    <div className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors font-bold text-xs">TO</div>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700"
+                                        placeholder="e.g. Pune"
+                                        value={destination}
+                                        onChange={(e) => setDestination(e.target.value)}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -75,45 +100,35 @@ const CreateTripPage = () => {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Total Seats</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Price per Seat (₹)</label>
                                 <div className="relative group">
-                                    <LayoutGrid className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                                    <DollarSign className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                                     <input
                                         type="number"
                                         required
-                                        min="1"
-                                        max="100"
+                                        min="0"
+                                        step="1"
                                         className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700"
-                                        value={totalSeats}
-                                        onChange={(e) => setTotalSeats(parseInt(e.target.value))}
+                                        value={price}
+                                        onChange={(e) => setPrice(parseFloat(e.target.value))}
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5 ml-1">Price per Seat (₹)</label>
-                            <div className="relative group">
-                                <DollarSign className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
-                                <input
-                                    type="number"
-                                    required
-                                    min="0"
-                                    step="0.01"
-                                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700"
-                                    value={price}
-                                    onChange={(e) => setPrice(parseFloat(e.target.value))}
-                                />
-                            </div>
+                        {/* Hidden info about fixed seats */}
+                        <div className="px-4 py-3 bg-amber-50 rounded-xl border border-amber-100 flex items-center gap-3">
+                            <LayoutGrid size={18} className="text-amber-500" />
+                            <p className="text-xs text-amber-700 font-medium">Standard Bus Configuration: <span className="font-bold">40 Seats (2+2 Layout)</span></p>
                         </div>
 
-                        <div className="pt-4">
+                        <div className="pt-2">
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 hover:shadow-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? 'Creating Trip...' : 'Create New Trip'}
+                                {loading ? 'Creating Route...' : 'Create Route'}
                             </button>
                         </div>
                     </form>
