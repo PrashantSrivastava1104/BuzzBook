@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "mock": "node src/mockServer.js"
+    "mock": "node src/mockServer.js",
+    "seed": "node src/seed.js"
   },
   "keywords": [],
   "author": "",
