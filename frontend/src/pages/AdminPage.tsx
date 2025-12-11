@@ -3,7 +3,7 @@ import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Bus, Calendar, DollarSign, LayoutGrid } from 'lucide-react';
 
-const AdminPage = () => {
+const CreateTripPage = () => {
     const [name, setName] = useState('');
     const [startTime, setStartTime] = useState('');
     const [totalSeats, setTotalSeats] = useState(40);
@@ -34,9 +34,9 @@ const AdminPage = () => {
                 <div className="bg-slate-900 px-8 py-6 flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                            <PlusCircle className="text-indigo-400" /> Admin Dashboard
+                            <PlusCircle className="text-indigo-400" /> Create New Trip
                         </h1>
-                        <p className="text-slate-400 text-sm mt-1">Schedule a new journey</p>
+                        <p className="text-slate-400 text-sm mt-1">Add a new bus route and schedule</p>
                     </div>
                     <div className="bg-white/10 p-3 rounded-xl">
                         <Bus className="text-white" size={24} />
@@ -123,4 +123,4 @@ const AdminPage = () => {
     );
 };
 
-export default AdminPage;
+export default CreateTripPage;

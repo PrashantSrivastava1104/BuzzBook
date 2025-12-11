@@ -39,9 +39,9 @@ function AppRoutes() {
           <Route path="/booking/:id" element={<BookingPage />} />
 
           <Route
-            path="/admin"
+            path="/add-trip"
             element={
-              <ProtectedRoute adminOnly>
+              <ProtectedRoute>
                 <AdminPage />
               </ProtectedRoute>
             }

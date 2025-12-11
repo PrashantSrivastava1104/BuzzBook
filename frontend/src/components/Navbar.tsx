@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Bus, LogOut, ShieldCheck, Sparkles } from 'lucide-react';
+import { Bus, LogOut, PlusCircle, Sparkles } from 'lucide-react';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated, isAdmin } = useAuth();
@@ -45,15 +45,13 @@ const Navbar = () => {
                                     </div>
                                 </div>
 
-                                {isAdmin && (
-                                    <Link
-                                        to="/admin"
-                                        className="group relative overflow-hidden flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-purple-500/40 font-semibold text-sm"
-                                    >
-                                        <ShieldCheck size={16} />
-                                        <span>Admin</span>
-                                    </Link>
-                                )}
+                                <Link
+                                    to="/add-trip"
+                                    className="group relative overflow-hidden flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-purple-500/40 font-semibold text-sm"
+                                >
+                                    <PlusCircle size={16} />
+                                    <span>Add Trip</span>
+                                </Link>
 
                                 <button
                                     onClick={handleLogout}
